@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Haga su pedido aquí</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Animaciones y estilos base */
+    .precio-animado { animation: brillo 1.5s infinite alternate; }
+    @keyframes brillo {
+      from { color: #fb2424; }
+      to { color: #f59e0b; }
+    }
+
+    /* Carrusel mejorado */
+    .carousel-item {
+      position: absolute;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      width: 100%;
+      height: 100%;
+    }
+    .carousel-item.active {
+      opacity: 1;
+      position: relative;
+    }
+
+    /* Menú lateral */
+    #sidebar li {
+      transition: all 0.3s ease;
+      border-radius: 8px;
+    }
+    #sidebar li:hover {
+      background: #7e5f88;
+      transform: translateX(5px);
+      border-radius: 3px;
+    }
+    #sidebar li a {
+      display: block;
+      padding: 8px;
+      color: #4a5568;
+      transition: color 0.3s ease;
+    }
+    #sidebar li:hover a {
+      color: #c53030;
+    }
+
+    /* Productos */
+    #product-list > div {
+      transition: all 0.3s ease;
+      transform-origin: center;
+    }
+    #product-list > div:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Modal */
+    #image-modal {
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    #image-modal.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Scrollbar personalizado */
+    #cart-panel::-webkit-scrollbar {
+      width: 8px;
+    }
+    #cart-panel::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    #cart-panel::-webkit-scrollbar-thumb {
+      background: #f59e0b;
+      border-radius: 4px;
+    }
+
+    /* Botones */
+    button:not([disabled]) {
+      transition: all 0.2s ease;
+    }
+    button:hover:not([disabled]) {
+      filter: brightness(110%);
+      transform: scale(1.05);
+    }
+
+    /* Estilos para productos agotados */
+.producto[data-agotado="true"] {
+  position: relative;
+  opacity: 0.6;
+}
+
+.agotado-overlay {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.8);
+  font-weight: bold;
+  color: #ef4444;
+  z-index: 1;
+  border-radius: 0.75rem;
+}
+
+.producto[data-agotado="true"] .agotado-overlay {
+  display: flex;
+}
+
+button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+    /* Paginación */
+    .paginacion button {
+      padding: 4px 8px;
+      border-radius: 5px;
+      background: #fcf8fc;
+      border: 1px solid #cbd5e0;
+    }
+    .paginacion button:hover {
+      background: #f59e0b20;
+      border-color: #f59e0b;
+    }
+
+    /* Inputs */
+    input, select {
+      transition: all 0.3s ease;
+      border: 1px solid #cbd5e0;
+    }
+    input:focus, select:focus {
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 3px #f59e0b30;
+    }
+
+    /* Imágenes productos */
+    .producto-imagen {
+      transition: transform 0.3s ease;
+    }
+    .producto-imagen:hover {
+      transform: scale(1.05);
+    }
+
+    /* Selectores de color */
+    .color-selector button {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .color-selector button.selected {
+      border-color: #4a5568;
+      box-shadow: 0 0 3px rgba(0,0,0,0.3);
+      transform: scale(1.1);
+    }
+
+    /* Validación */
+    .input-error {
+      border-color: #f87171 !important;
+      box-shadow: 0 0 0 1px #f87171;
+    }
+    .error-message {
+      color: #ef4444;
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      display: none;
+    }
+    .color-error {
+      border: 1px solid #f87171 !important;
+      padding: 2px;
+      border-radius: 0.25rem;
+    }
+    .notification {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      z-index: 100;
+      animation: slideIn 0.3s ease-out;
+    }
+    @keyframes slideIn {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+  </style>
+</head>
+<body class="bg-yellow-50 text-gray-900">
+  <!-- Encabezado -->
+  <header class="flex items-center justify-between p-4 bg-pink-500 text-white">
+    <div class="flex items-center">
+      <button id="menu-btn" class="mr-4"><i class="fas fa-bars"></i></button>
+      <h1 class="text-xl font-bold">Haga su pedido aquí</h1>
+    </div>
+    <div class="relative">
+      <button id="cart-btn"><i class="fas fa-shopping-cart text-2xl"></i></button>
+      <span id="cart-count" class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs px-2">0</span>
+    </div>
+  </header>
+
+  <!-- Menú lateral -->
+  <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-white shadow-md transform -translate-x-full transition-transform duration-300 z-50">
+    <div class="p-4">
+      <button id="close-menu" class="mb-4 text-red-500"><i class="fas fa-times"></i> </button>
+      <ul>
+        <li class="py-2"><a href="#" onclick="filterCategory('all')">Todas</a></li>
+        <li class="py-2"><a href="#" onclick="filterCategory('mochilas')">Mochilas</a></li>
+        <li class="py-2"><a href="#" onclick="filterCategory('accesorios')">Accesorios</a></li>
+        <li class="py-2"><a href="#" onclick="filterCategory('bolsos')">Bolsos</a></li>
+        <li class="py-2"><a href="#" onclick="filterCategory('juguetes')">Juguetes</a></li>
+        <li class="py-2"><a href="#" onclick="filterCategory('juegos')">Juegos de mesa</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Banner -->
+  <section class="relative overflow-hidden">
+    <div id="carousel" class="w-full h-64 relative">
+      <div class="carousel-item active">
+        <img src="Imagen/1.jpg" class="w-full h-full object-cover" alt="Banner 1">
+      </div>
+      <div class="carousel-item">
+        <video class="w-full h-full object-cover" autoplay muted loop>
+          <source src="video1.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="carousel-item">
+        <img src="banner2.jpg" class="w-full h-full object-cover" alt="Banner 2">
+      </div>
+    </div>
+  </section>
+
+  <!-- Productos -->
+  <main class="p-4" id="product-container">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="product-list">
+      <!-- Producto 1 -->
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-mochilas" data-agotado="true">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/1.jpg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Económica</h2>
+        <p class="text-xs text-gray-600 truncate">Material: poliester impermiable de color negro. <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">✓Medidas:45x32x17 ✓4 compartimentos+laterales+de laptop</p>
+        <p class="precio-animado font-bold text-sm mt-1">$4000.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #7a7a7a" onclick="selectColor(this, 'Gris')"></button>
+          <button style="background-color: #2f9200" onclick="selectColor(this, 'Verde')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Mochila Económica', 4000.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-mochilas" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/3.jpg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Standar Amiri</h2>
+        <p class="text-xs text-gray-600 truncate">✓Material:lona ligera <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">✓Medidas:48x34x24 (10kg) ✓4 compartimentos+laterales ✓Cipers gruesos y fuertes ✓Buen equilibrio entre calidad, tamaño y precio</p>
+        <p class="precio-animado font-bold text-sm mt-1">$5900.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #000000" onclick="selectColor(this, 'Negro')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Mochila Standar Amiri', 5900.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-mochilas" data-agotado="true">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/4.jpg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Standar Adidas</h2>
+        <p class="text-xs text-gray-600 truncate">✓Material:lona ligera <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">✓Medidas:48x34x24 (10kg) ✓4 compartimentos+laterales ✓Cipers gruesos y fuertes ✓Buen equilibrio entre calidad, tamaño y precio.</p>
+        <p class="precio-animado font-bold text-sm mt-1">$5900.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #080808" onclick="selectColor(this, 'Negro')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Mochila Standar Adidas', 5900.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-mochilas" data-agotado="true">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/5.jpg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Standar de Flores</h2>
+        <p class="text-xs text-gray-600 truncate">✓Material:lona ligera <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">✓Medidas:48x34x24 (10kg) ✓4 compartimentos+laterales ✓Cipers gruesos y fuertes ✓Buen equilibrio entre calidad, tamaño y precio</p>
+        <p class="precio-animado font-bold text-sm mt-1">$5900.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #050505" onclick="selectColor(this, 'Negro')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Mochila Satndar de Flores', 5900.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-mochilas" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/7.jpg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Nike (Artesanal)</h2>
+        <p class="text-xs text-gray-600 truncate"> ✓Material: Lona fuerte <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">✓Medidas:55x35x25 (10kg) ✓3 compartimentos+laterales ✓Buen equilibrio entre calidad, tamaño y precio.</p>
+        <p class="precio-animado font-bold text-sm mt-1">$5000.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #000000" onclick="selectColor(this, 'Negro')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Mochila Nike Artesanal', 5000.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-mochilas" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/8.jpg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Adidas (Artesanal)</h2>
+        <p class="text-xs text-gray-600 truncate"> ✓Material: Lona fuerte. <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">✓Medidas:55x35x25 (10kg) ✓3 compartimentos+laterales ✓Buen equilibrio entre calidad, tamaño y precio.</p>
+        <p class="precio-animado font-bold text-sm mt-1">$5000.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #000000" onclick="selectColor(this, 'Negro')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Mochila Adidas Artesanal', 5000.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-accesorios" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/9.jpg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Sombrilla Grande</h2>
+        <p class="text-xs text-gray-600 truncate">✓Mango curvo <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">✓1.2 metros de diámetro abierto ✓8 varillas de policarbonato reforzado ✓Estructura resistente.</p>
+        <p class="precio-animado font-bold text-sm mt-1">$3200.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #000000" onclick="selectColor(this, 'Negro')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Sombrilla Grande', 3200.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-accesorios" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/10.jpg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Riñonera</h2>
+        <p class="text-xs text-gray-600 truncate"> ✓Material: Vinil. <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs"> ✓2 compartimentos ✓Estructura resistente.</p>
+        <p class="precio-animado font-bold text-sm mt-1">$1900.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #000000" onclick="selectColor(this, 'Negro')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Riñonera', 1900.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-accesorios" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/11.jpg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Portapomo térmico</h2>
+        <p class="text-xs text-gray-600 truncate">✓1.5 lts. <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">✓Estructura resistente.</p>
+        <p class="precio-animado font-bold text-sm mt-1">$1400.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #030303" onclick="selectColor(this, 'Negro')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Portapomo térmico', 1400.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/12.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Maquillaje infantil </h2>
+        <p class="text-xs text-gray-600 truncate">Modelo paleta. <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">Circular y Estrella</p>
+        <p class="precio-animado font-bold text-sm mt-1">$1400.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #fd008b" onclick="selectColor(this, 'Rosada')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Maquillaje infantil modelo paleta', 1400.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/13.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Maquillaje infantil </h2>
+        <p class="text-xs text-gray-600 truncate">Maquillaje infantil. <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs"></p>
+        <p class="precio-animado font-bold text-sm mt-1">$1250.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #ff02ab" onclick="selectColor(this, 'Rosado')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Maquillaje infantil', 1250.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/14.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Reloj proyector </h2>
+        <p class="text-xs text-gray-600 truncate"> <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">.</p>
+        <p class="precio-animado font-bold text-sm mt-1">$1800.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #ff009d" onclick="selectColor(this, 'Rosado')"></button>
+          <button style="background-color: #0000ff" onclick="selectColor(this, 'Azul')"></button>
+          <button style="background-color: #b700ff" onclick="selectColor(this, 'Morado')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('RELOJ PROYECTOR', 1800.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/15.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Trencito </h2>
+        <p class="text-xs text-gray-600 truncate"> <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs"></p>
+        <p class="precio-animado font-bold text-sm mt-1">$1900.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #ff0000" onclick="selectColor(this, 'Rojo')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Trencito', 1900.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/16.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Sirena con luces </h2>
+        <p class="text-xs text-gray-600 truncate">Se enciende la cola <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs"></p>
+        <p class="precio-animado font-bold text-sm mt-1">$1800.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #ff00c8" onclick="selectColor(this, 'Rosado')"></button>
+          <button style="background-color: #0000ff" onclick="selectColor(this, 'Azul')"></button>
+          <button style="background-color: #00ff00" onclick="selectColor(this, 'Verde')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Sirena con luces', 1800.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/17.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Slime </h2>
+        <p class="text-xs text-gray-600 truncate">Modelo oso <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs"></p>
+        <p class="precio-animado font-bold text-sm mt-1">$580.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #ff0000" onclick="selectColor(this, 'Rojo')"></button>
+          <button style="background-color: #0000ff" onclick="selectColor(this, 'Azul')"></button>
+          <button style="background-color: #00ff00" onclick="selectColor(this, 'Verde')"></button>
+          <button style="background-color: #eeff01" onclick="selectColor(this, 'Amarillo')"></button>
+          <button style="background-color: #ae02fd" onclick="selectColor(this, 'Morado')"></button>
+
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Slime', 580.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/18.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Pistola Hulk </h2>
+        <p class="text-xs text-gray-600 truncate">Incluye balas y brazalete lanza discos <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">Alcance de 8 metros</p>
+        <p class="precio-animado font-bold text-sm mt-1">$2800.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #00ff00" onclick="selectColor(this, 'Verde')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Pistola Hulk', 2800.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/19.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Muñeca Frozen </h2>
+        <p class="text-xs text-gray-600 truncate">Son engomaditas buena calidad <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs"></p>
+        <p class="precio-animado font-bold text-sm mt-1">$1800.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #5759ce" onclick="selectColor(this, 'Azul claro')"></button>
+          <button style="background-color: #0000ff" onclick="selectColor(this, 'Azul oscuro')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Muñeca Frozen', 1800.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/20.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Set Paw Patrol </h2>
+        <p class="text-xs text-gray-600 truncate"> 6  PERSONAJES.  <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">SON DE IMPULSO</p>
+        <p class="precio-animado font-bold text-sm mt-1">$6500.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #b8b6b6" onclick="selectColor(this, 'Standar')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Set de 6 Paw Patrol', 6500.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/21.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Cars Rayo Macqueen </h2>
+        <p class="text-xs text-gray-600 truncate">Paquete de 4 carros. <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">De impulso.</p>
+        <p class="precio-animado font-bold text-sm mt-1">$2400.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #9c9c9c" onclick="selectColor(this, 'Standar')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Cars Rayo Macqueen', 2400.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/22.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Consola Portatil Retro </h2>
+        <p class="text-xs text-gray-600 truncate"> Tiene 400 juegos. <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">En 1 Con Joystick 😍Se puede conectar al TV </p>
+        <p class="precio-animado font-bold text-sm mt-1">$7000.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #000000" onclick="selectColor(this, 'Negro')"></button>
+          <button style="background-color: #dbdbdb" onclick="selectColor(this, 'Blanco')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Consola Portatil Retro', 7000.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/23.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Juego de Pin Pon </h2>
+        <p class="text-xs text-gray-600 truncate">Incluye 2 raquetas. <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">3 pelotas y 1 red</p>
+        <p class="precio-animado font-bold text-sm mt-1">$1700.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #00ff00" onclick="selectColor(this, 'Verde')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Juego de Pin Pon', 1700.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/24.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Bloques legos para armar</h2>
+        <p class="text-xs text-gray-600 truncate">Posee 54 piezas. <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs"></p>
+        <p class="precio-animado font-bold text-sm mt-1">$2450.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #acacac" onclick="selectColor(this, 'Variado')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Bloques legos para armar', 2450.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/25.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Rompecabezas </h2>
+        <p class="text-xs text-gray-600 truncate">20 piezas gruesas <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">Jurassic World - Dragon Ball - Unicornio.</p>
+        <p class="precio-animado font-bold text-sm mt-1">$1250.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #ff0000" onclick="selectColor(this, 'Rojo')"></button>
+          <button style="background-color: #c300ff" onclick="selectColor(this, 'Morado')"></button>
+          <button style="background-color: #ff00bf" onclick="selectColor(this, 'Rosado')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Rompecabezas de 20 piezas gruesas', 1250.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/26.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Ametralladora </h2>
+        <p class="text-xs text-gray-600 truncate">Ametralladora pequeña. <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs"></p>
+        <p class="precio-animado font-bold text-sm mt-1">$2100.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #000000" onclick="selectColor(this, 'Negro')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Ametralladora', 2100.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/27.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Cartucheras </h2>
+        <p class="text-xs text-gray-600 truncate">Incluye. <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">1 block pequeño - 3 lápices - 1 sacapunta - 1 goma de borrar.</p>
+        <p class="precio-animado font-bold text-sm mt-1">$1300.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #ff0000" onclick="selectColor(this, 'Rojo')"></button>
+          <button style="background-color: #0000ff" onclick="selectColor(this, 'Azul')"></button>
+          <button style="background-color: #d403fd" onclick="selectColor(this, 'Morado')"></button>
+          <button style="background-color: #fd03aa" onclick="selectColor(this, 'Rosado')"></button>
+
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Cartucheras', 1300.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/28.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Camioncitos </h2>
+        <p class="text-xs text-gray-600 truncate">Camiones pequeños 3 en el paquete. <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">Amplia capacidad, bolsillos laterales y cierre reforzado.</p>
+        <p class="precio-animado font-bold text-sm mt-1">$1600.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #ff0000" onclick="selectColor(this, 'Rojo')"></button>
+          <button style="background-color: #0000ff" onclick="selectColor(this, 'Azul')"></button>
+          <button style="background-color: #fc7d06" onclick="selectColor(this, 'Naranja')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Camiones pequeños 3 en el paquete', 1600.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/29.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Guagua </h2>
+        <p class="text-xs text-gray-600 truncate">Son de tracción <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs"></p>
+        <p class="precio-animado font-bold text-sm mt-1">$1500.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #ff0000" onclick="selectColor(this, 'Rojo')"></button>
+          <button style="background-color: #0000ff" onclick="selectColor(this, 'Azul')"></button>
+          <button style="background-color: #00ff00" onclick="selectColor(this, 'Verde')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Guagua', 1500.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/30.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Crayolas </h2>
+        <p class="text-xs text-gray-600 truncate">Caja de 12 crayolas <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs"></p>
+        <p class="precio-animado font-bold text-sm mt-1">$500.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #e5ff00" onclick="selectColor(this, 'Amarillo')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Crayolas 12', 500.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/12.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Set Minecraft </h2>
+        <p class="text-xs text-gray-600 truncate">12 Súper Héroe. <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">Amplia capacidad, bolsillos laterales y cierre reforzado.</p>
+        <p class="precio-animado font-bold text-sm mt-1">$3500.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #000000" onclick="selectColor(this, 'Variado')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Set Minecraft 12 Súper Héroes', 3500.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/32.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Set de cocina </h2>
+        <p class="text-xs text-gray-600 truncate">8 piezas <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs"></p>
+        <p class="precio-animado font-bold text-sm mt-1">$1600.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #ff00bf" onclick="selectColor(this, 'Rosado')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Set de cocina', 1600.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/34.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Set de cocina </h2>
+        <p class="text-xs text-gray-600 truncate">. <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs"></p>
+        <p class="precio-animado font-bold text-sm mt-1">$1500.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #000000" onclick="selectColor(this, 'Variado')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Set de cocina', 1500.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/33.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Plastilina </h2>
+        <p class="text-xs text-gray-600 truncate">12 colores <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs"></p>
+        <p class="precio-animado font-bold text-sm mt-1">$1200.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #000000" onclick="selectColor(this, 'Variado')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Plastilina', 1200.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/35.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Set de doctora </h2>
+        <p class="text-xs text-gray-600 truncate"> <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs"></p>
+        <p class="precio-animado font-bold text-sm mt-1">$1600.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #ff00bf" onclick="selectColor(this, 'Rojo')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Set de doctora', 1600.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/36.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Eva Puzzle </h2>
+        <p class="text-xs text-gray-600 truncate">Puzzle didáctico para armar <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">Se aprende el alfabeto.</p>
+        <p class="precio-animado font-bold text-sm mt-1">$1200.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #000000" onclick="selectColor(this, 'Variado')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Eva puzzle', 1200.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/37.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Cactus bailarín </h2>
+        <p class="text-xs text-gray-600 truncate"> Canta, baila, repite, graba, tiene luces.<button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">Trae su cable para cargarlo</p>
+        <p class="precio-animado font-bold text-sm mt-1">$3800.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #00ff00" onclick="selectColor(this, 'Verde')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Cactus bailarín', 3800.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/38.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Foami Moldeable </h2>
+        <p class="text-xs text-gray-600 truncate">Varios colores <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs"></p>
+        <p class="precio-animado font-bold text-sm mt-1">$1200.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #ff0000" onclick="selectColor(this, 'Variado')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Foami moldeable', 1200.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/39.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Pqaquete de bolas </h2>
+        <p class="text-xs text-gray-600 truncate"> <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs"></p>
+        <p class="precio-animado font-bold text-sm mt-1">$600.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #020202" onclick="selectColor(this, 'Variado')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Paquete de bolas', 600.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+
+      <!-- Agregar más productos aquí con la misma estructura -->
+      
+    </div>
+    <!-- Paginación -->
+    <div id="pagination-container" class="mt-6 flex justify-center space-x-2"></div>
+  </main>
+
+  <!-- Carrito -->
+  <div id="cart-panel" class="fixed top-0 right-0 w-80 h-full bg-white shadow-lg transform translate-x-full transition-transform duration-300 z-50 overflow-y-auto p-4">
+    <button id="close-cart" class="text-red-500 mb-4"><i class="fas fa-times"></i> </button>
+    <div id="cart-items"></div>
+    <button onclick="clearCart()" class="mt-2 w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600">
+      Vaciar Carrito
+    </button>
+    <div class="font-bold mt-4">Total: $<span id="cart-total">0.00</span></div>
+    <a id="checkout-btn" href="#" target="_blank" class="mt-2 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Hacer pedido</a>
+  </div>
+
+  <!-- Modal imagen ampliada -->
+  <div id="image-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+    <img id="modal-img" class="max-w-full max-h-full">
+    <button class="absolute top-4 right-4 text-white text-2xl" onclick="closeModal()">&times;</button>
+  </div>
+
+  <script>
+    // Variables globales
+    let currentIndex = 0;
+    let currentPage = 1;
+    const productsPerPage = 10;
+    let cart = [];
+    const items = document.querySelectorAll('.carousel-item');
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', () => {
+      // Iniciar carrusel
+      setInterval(() => {
+        items[currentIndex].classList.remove('active');
+        currentIndex = (currentIndex + 1) % items.length;
+        items[currentIndex].classList.add('active');
+      }, 3000);
+
+      // Mostrar primera página
+      updatePagination();
+    });
+
+    // Funciones de UI
+    document.getElementById('menu-btn').onclick = () => {
+      document.getElementById('sidebar').classList.remove('-translate-x-full');
+    };
+
+    document.getElementById('close-menu').onclick = () => {
+      document.getElementById('sidebar').classList.add('-translate-x-full');
+    };
+
+    document.getElementById('cart-btn').onclick = () => {
+      document.getElementById('cart-panel').classList.remove('translate-x-full');
+    };
+
+    document.getElementById('close-cart').onclick = () => {
+      document.getElementById('cart-panel').classList.add('translate-x-full');
+    };
+
+    function toggleDescription(btn) {
+      const desc = btn.parentElement.nextElementSibling;
+      desc.classList.toggle('hidden');
+    }
+
+    function expandImage(src) {
+      document.getElementById('modal-img').src = src;
+      document.getElementById('image-modal').classList.add('visible');
+    }
+
+    function closeModal() {
+      document.getElementById('image-modal').classList.remove('visible');
+    }
+
+    // Función para mostrar notificaciones
+    function showNotification(message, type = 'error') {
+      const notification = document.createElement('div');
+      notification.className = `notification bg-${type === 'error' ? 'red' : 'purple'}-500 text-white`;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+
+    // Funciones del carrito con validación
+    function addToCart(name, price, element) {
+      const product = element.closest('.producto');
+      const color = product.dataset.selectedColor;
+      const quantityInput = product.querySelector('input[type="number"]');
+      const nameInput = product.querySelector('.nombre-cliente');
+      const colorError = product.querySelector('.color-error-message');
+      const nameError = product.querySelector('.nombre-error-message');
+      
+      // Resetear errores
+      product.querySelector('.color-selector').classList.remove('color-error');
+      nameInput.classList.remove('input-error');
+      colorError.style.display = 'none';
+      nameError.style.display = 'none';
+      
+      // Validar campos
+      let isValid = true;
+      
+      // Validar color
+      if (!color) {
+        isValid = false;
+        product.querySelector('.color-selector').classList.add('color-error');
+        colorError.style.display = 'block';
+      }
+      
+      // Validar nombre
+      const customerName = nameInput.value.trim();
+      if (!customerName) {
+        isValid = false;
+        nameInput.classList.add('input-error');
+        nameError.style.display = 'block';
+      }
+      
+      if (!isValid) {
+        showNotification('Por favor complete todos los campos requeridos', 'error');
+        return;
+      }
+      
+      // Si todo es válido, agregar al carrito
+      const quantity = quantityInput.value || 1;
+      
+      cart.push({ 
+        name: `${name} (${color})`, 
+        price: parseFloat(price),
+        quantity: parseInt(quantity),
+        customerName: customerName
+      });
+      
+      updateCartDisplay();
+      showNotification('Producto añadido al carrito', 'success');
+    }
+
+    function updateCartDisplay() {
+      const container = document.getElementById('cart-items');
+      container.innerHTML = '';
+      let total = 0;
+      
+      if(cart.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-center py-4">El carrito está vacío</p>';
+      } else {
+        cart.forEach((item, index) => {
+          total += item.price * item.quantity;
+          const div = document.createElement('div');
+          div.className = 'border-b py-2 flex justify-between items-center';
+          div.innerHTML = `
+            <div class="flex-1">
+              <strong>${item.name}</strong><br>
+              Cantidad: ${item.quantity} - $${(item.price * item.quantity).toFixed(2)}<br>
+              Cliente: ${item.customerName}
+            </div>
+            <button onclick="removeFromCart(${index})" class="ml-2 text-red-500 hover:text-red-700">
+              <i class="fas fa-trash text-sm"></i>
+            </button>
+          `;
+          container.appendChild(div);
+        });
+      }
+      
+      document.getElementById('cart-total').innerText = total.toFixed(2);
+      document.getElementById('cart-count').innerText = cart.length;
+      
+      const url = `https://wa.me/5352666216?text=${encodeURIComponent(
+        cart.length > 0 
+          ? 'Pedido:\n\n' + cart.map(i => 
+              `Producto: ${i.name}\nCantidad: ${i.quantity}\nPrecio: $${i.price.toFixed(2)}\nSubtotal: $${(i.price * i.quantity).toFixed(2)}\nCliente: ${i.customerName}`
+            ).join('\n\n') + `\n\nTotal: $${total.toFixed(2)}`
+          : 'Carrito vacío'
+      )}`;
+      document.getElementById('checkout-btn').href = url;
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      updateCartDisplay();
+      showNotification('Producto eliminado del carrito', 'error');
+    }
+
+    function clearCart() {
+      cart = [];
+      updateCartDisplay();
+      showNotification('Carrito vaciado', 'error');
+    }
+
+    // Selector de color
+    function selectColor(btn, color) {
+      // Remover selección previa en este producto
+      const product = btn.closest('.producto');
+      product.querySelectorAll('.color-selector button').forEach(b => {
+        b.classList.remove('selected');
+      });
+      
+      // Seleccionar nuevo color
+      btn.classList.add('selected');
+      product.dataset.selectedColor = color;
+      
+      // Ocultar mensaje de error si existe
+      const colorError = product.querySelector('.color-error-message');
+      if (colorError) {
+        colorError.style.display = 'none';
+        product.querySelector('.color-selector').classList.remove('color-error');
+      }
+    }
+
+    // Variable global para productos filtrados
+let filteredProducts = [];
+
+// Sistema de paginación corregido con animación
+function updatePagination() {
+  const paginationContainer = document.getElementById('pagination-container');
+  paginationContainer.innerHTML = '';
+
+  const pageCount = Math.ceil(filteredProducts.length / productsPerPage);
+
+  if (pageCount <= 1) {
+    showPage(1, filteredProducts); // Mostrar todos si una sola página
+    return;
+  }
+
+  // Botón Anterior
+  const prevButton = document.createElement('button');
+  prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
+  prevButton.className = `px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-300 cursor-default' : 'bg-gray-200 hover:bg-gray-300'}`;
+  prevButton.disabled = currentPage === 1;
+  prevButton.onclick = () => {
+    if (currentPage > 1) {
+      currentPage--;
+      showPage(currentPage, filteredProducts);
+      updatePagination();
+    }
+  };
+  paginationContainer.appendChild(prevButton);
+
+  // Números de página
+  for (let i = 1; i <= pageCount; i++) {
+    const button = document.createElement('button');
+    button.className = `mx-1 px-3 py-1 rounded ${i === currentPage ? 'bg-yellow-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`;
+    button.textContent = i;
+    button.onclick = () => {
+      currentPage = i;
+      showPage(i, filteredProducts);
+      updatePagination();
+    };
+    paginationContainer.appendChild(button);
+  }
+
+  // Botón Siguiente
+  const nextButton = document.createElement('button');
+  nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
+  nextButton.className = `px-3 py-1 rounded ${currentPage === pageCount ? 'bg-gray-300 cursor-default' : 'bg-gray-200 hover:bg-gray-300'}`;
+  nextButton.disabled = currentPage === pageCount;
+  nextButton.onclick = () => {
+    if (currentPage < pageCount) {
+      currentPage++;
+      showPage(currentPage, filteredProducts);
+      updatePagination();
+    }
+  };
+  paginationContainer.appendChild(nextButton);
+
+  // Mostrar página actual
+  showPage(currentPage, filteredProducts);
+}
+
+function showPage(page, products) {
+  const start = (page - 1) * productsPerPage;
+  const end = start + productsPerPage;
+
+  products.forEach((product, index) => {
+    if (index >= start && index < end) {
+      product.style.opacity = 0;
+      product.style.display = 'block';
+      setTimeout(() => {
+        product.style.transition = 'opacity 0.3s';
+        product.style.opacity = 1;
+      }, 50);
+    } else {
+      product.style.display = 'none';
+      product.style.opacity = 0;
+    }
+  });
+}
+
+// Filtrado de categorías - Versión corregida
+function filterCategory(category) {
+  const products = Array.from(document.querySelectorAll('#product-list > div'));
+
+  filteredProducts = products.filter(product => {
+    if (category === 'all') return true;
+    return product.classList.contains(`category-${category}`);
+  });
+
+  products.forEach(product => {
+    product.style.display = 'none';
+  });
+
+  document.getElementById('sidebar').classList.add('-translate-x-full');
+  currentPage = 1;
+  updatePagination();
+}
+
+// Inicialización con todos los productos al cargar
+window.addEventListener('DOMContentLoaded', () => {
+  filteredProducts = Array.from(document.querySelectorAll('#product-list > div'));
+  updatePagination();
+});
+
+  </script>
+</body>
+</html>                
