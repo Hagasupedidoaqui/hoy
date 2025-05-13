@@ -1255,7 +1255,7 @@ button[disabled] {
       
       const url = `https://wa.me/5352666216?text=${encodeURIComponent(
         cart.length > 0 
-          ? 'Pedido:\n\n' + cart.map(i => 
+          ? 'Hola, me gustaría realizar el siguiente Pedido:\n\n' + cart.map(i => 
               `Producto: ${i.name}\nCantidad: ${i.quantity}\nPrecio: $${i.price.toFixed(2)}\nSubtotal: $${(i.price * i.quantity).toFixed(2)}\nCliente: ${i.customerName}`
             ).join('\n\n') + `\n\nTotal: $${total.toFixed(2)}`
           : 'Carrito vacío'
