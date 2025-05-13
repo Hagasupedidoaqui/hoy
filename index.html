@@ -1248,6 +1248,44 @@ button[disabled] {
         </div>
       </div>
 
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-accesorios" data-agotado="false">
+        <div class="precio-animado font-bold text-sm mt-1 agotado-overlay">AGOTADO</div>
+        <img src="Imagen/59.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Lunchera térmica</h2>
+        <p class="text-xs text-gray-600 truncate"> Material: Térmico <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs"></p>
+        <p class="precio-animado font-bold text-sm mt-1">$1800.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #000000" onclick="selectColor(this, 'Negro')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Lunchera térmica', 1800.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-accesorios" data-agotado="false">
+        <div class="precio-animado font-bold text-sm mt-1 agotado-overlay">AGOTADO</div>
+        <img src="Imagen/60.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm"> Pechera </h2>
+        <p class="text-xs text-gray-600 truncate"> Material: Vinil resistente <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs"> Posee 3 compartimentos. </p>
+        <p class="precio-animado font-bold text-sm mt-1">$1900.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #000000" onclick="selectColor(this, 'Negro')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Pechera de vinil', 1900.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
 
       <!-- Agregar más productos aquí con la misma estructura -->
       
