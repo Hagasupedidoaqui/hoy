@@ -373,15 +373,17 @@ button[disabled] {
       <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juegos de mesa" data-agotado="false">
         <div class="precio-animado font-bold text-sm mt-1 agotado-overlay">AGOTADO</div>
         <div class="flex gap-2">
-          <img src="Imagen/7.jpg" class="w-1/2 h-30 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
-          <img src="Imagen/8.jpg" class="w-1/2 h-30 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+          <img src="Imagen/7.jpg" class="w-1/4 h-30 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+          <img src="Imagen/8.jpg" class="w-1/4 h-30 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+          <img src="Imagen/46.jpeg" class="w-1/4 h-30 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+
         </div>
         <h2 class="font-bold mt-2 text-sm">Artesanales</h2>
         <p class="text-xs text-gray-600 truncate"> Marcas: Nike, Adidas, Puma <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
         <p class="hidden text-xs">✓Material: Lona fuerte. ✓Medidas:55x35x25 (10kg) ✓3 compartimentos+laterales ✓Buen equilibrio entre calidad, tamaño y precio.</p>
         <p class="precio-animado font-bold text-sm mt-1">$5000.00</p>
         <div class="color-selector flex space-x-2 mt-2">
-          <button style="background-color: #7a7a7a" onclick="selectColor(this, 'Variada')"></button>
+          <button style="background-color: #000000" onclick="selectColor(this, 'Variada')"></button>
         </div>
         <span class="error-message color-error-message">Seleccione un color</span>
         <div class="flex flex-col space-y-1 mt-2 text-xs">
@@ -389,25 +391,6 @@ button[disabled] {
           <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
           <span class="error-message nombre-error-message">Ingrese su nombre</span>
           <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Mochila Artesanal marca:', 5000.00, this)">Añadir al carrito</button>
-        </div>
-      </div>
-
-      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-mochilas" data-agotado="false">
-        <div class="precio-animado font-bold text-sm mt-1 agotado-overlay">AGOTADO</div>
-        <img src="Imagen/8.jpg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
-        <h2 class="font-bold mt-2 text-sm">Adidas (Artesanal)</h2>
-        <p class="text-xs text-gray-600 truncate"> ✓Material: Lona fuerte. <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
-        <p class="hidden text-xs">✓Medidas:55x35x25 (10kg) ✓3 compartimentos+laterales ✓Buen equilibrio entre calidad, tamaño y precio.</p>
-        <p class="precio-animado font-bold text-sm mt-1">$5000.00</p>
-        <div class="color-selector flex space-x-2 mt-2">
-          <button style="background-color: #000000" onclick="selectColor(this, 'Negro')"></button>
-        </div>
-        <span class="error-message color-error-message">Seleccione un color</span>
-        <div class="flex flex-col space-y-1 mt-2 text-xs">
-          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
-          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
-          <span class="error-message nombre-error-message">Ingrese su nombre</span>
-          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Mochila Adidas Artesanal', 5000.00, this)">Añadir al carrito</button>
         </div>
       </div>
 
@@ -1024,23 +1007,79 @@ button[disabled] {
       <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juegos de mesa" data-agotado="false">
         <div class="agotado-overlay">AGOTADO</div>
         <div class="flex gap-2">
-          <img src="Imagen/40.jpeg" class="w-1/4 h-30 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
-          <img src="Imagen/41.jpeg" class="w-1/4 h-30 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
-          <img src="Imagen/42.jpeg" class="w-1/4 h-30 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+          <img src="Imagen/40.jpeg" class="w-1/2 h-30 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+          <img src="Imagen/41.jpeg" class="w-1/2 h-30 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
         </div>
-        <h2 class="font-bold mt-2 text-sm">Cartas UNO</h2>
-        <p class="text-xs text-gray-600 truncate">Modalidad: Flip, Mickey, Family, Princesa Sofía <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <h2 class="font-bold mt-2 text-sm">Cartas UNO Temática</h2>
+        <p class="text-xs text-gray-600 truncate">Modalidad: Mickey, Princesa Sofía <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
         <p class="hidden text-xs">UNO es un juego de cartas familiar en el que los jugadores compiten por ser los primeros en quedarse sin cartas, combinando colores y números mientras usan cartas especiales para cambiar el rumbo del juego.</p>
         <p class="precio-animado font-bold text-sm mt-1">$1800.00</p>
         <div class="color-selector flex space-x-2 mt-2">
-          <button style="background-color: #7a7a7a" onclick="selectColor(this, 'Variada')"></button>
+          <button style="background-color: #486ed6" onclick="selectColor(this, 'Variada')"></button>
         </div>
         <span class="error-message color-error-message">Seleccione un color</span>
         <div class="flex flex-col space-y-1 mt-2 text-xs">
           <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
           <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
           <span class="error-message nombre-error-message">Ingrese su nombre</span>
-          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Carta UNO', 1800.00, this)">Añadir al carrito</button>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Carta UNO temática modelo:', 1800.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juegos de mesa" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/45.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Carta UNO Flip </h2>
+        <p class="text-xs text-gray-600 truncate"> Modelo Flip <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">UNO es un juego de cartas familiar en el que los jugadores compiten por ser los primeros en quedarse sin cartas, combinando colores y números mientras usan cartas especiales para cambiar el rumbo del juego.</p>
+        <p class="precio-animado font-bold text-sm mt-1">$1800.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #9b02f3" onclick="selectColor(this, 'Morado')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Cartas UNO Flip', 1800.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juegos de mesa" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/42.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Carta UNO Clásica </h2>
+        <p class="text-xs text-gray-600 truncate"> Modelo Clásica <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">UNO es un juego de cartas familiar en el que los jugadores compiten por ser los primeros en quedarse sin cartas, combinando colores y números mientras usan cartas especiales para cambiar el rumbo del juego.</p>
+        <p class="precio-animado font-bold text-sm mt-1">$1800.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #f30202" onclick="selectColor(this, 'Rojo')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Cartas UNO Clásica:', 1800.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juegos de mesa" data-agotado="false">
+        <div class="agotado-overlay">AGOTADO</div>
+        <img src="Imagen/47.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Carta DOS </h2>
+        <p class="text-xs text-gray-600 truncate"> Juego de carta DOS <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">DOS es un juego de cartas de Mattel, sucesor del popular UNO. El objetivo es deshacerte de todas tus cartas siendo el primero en llegar a 2 cartas restantes y gritar "¡DOS!".</p>
+        <p class="precio-animado font-bold text-sm mt-1">$1800.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #0226f3" onclick="selectColor(this, 'Azul')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Cartas DOS:', 1800.00, this)">Añadir al carrito</button>
         </div>
       </div>
 
@@ -1361,4 +1400,4 @@ window.addEventListener('DOMContentLoaded', () => {
 
   </script>
 </body>
-</html>                
+</html>
