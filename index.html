@@ -145,7 +145,7 @@ button[disabled] {
     /* Imágenes productos */
     .producto-imagen {
       transition: transform 0.3s ease;
-      width: 50%; /* Escala la imagen al 100% del contenedor */
+      width: 70%; /* Escala la imagen al 100% del contenedor */
       max-width: 100px; /* Tamaño máximo de la imagen */
       height: auto;
       position: center;
@@ -159,7 +159,7 @@ button[disabled] {
       width: 24px;
       height: 24px;
       border-radius: 50%;
-      border: 2px solid transparent;
+      border: 3px solid transparent;
       cursor: pointer;
       transition: all 0.2s ease;
     }
@@ -250,10 +250,10 @@ button[disabled] {
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="product-list">
       <!-- Producto 1 -->
       <div class="producto border rounded-xl shadow-lg p-2 bg-white category-mochilas" data-agotado="false">
-        <div class="agotado-overlay">AGOTADO</div>
+        <div class="precio-animado font-bold text-sm mt-1 agotado-overlay">AGOTADO</div>
         <div class="flex gap-2">
-          <img src="Imagen/1.jpg" class="w-1/3 h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
-          <img src="Imagen/2.jpg" class="w-1/3 h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+          <img src="Imagen/1.jpg" class="w-1/4 h-30 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+          <img src="Imagen/2.jpg" class="w-1/4 h-30 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
         </div>
         <h2 class="font-bold mt-2 text-sm">Económica</h2>
         <p class="text-xs text-gray-600 truncate">Material: poliester impermiable de color negro. <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
@@ -273,7 +273,7 @@ button[disabled] {
       </div>
 
       <div class="producto border rounded-xl shadow-lg p-2 bg-white category-mochilas" data-agotado="false">
-        <div class="agotado-overlay">AGOTADO</div>
+        <div class="precio-animado font-bold text-sm mt-1 agotado-overlay">AGOTADO</div>
         <img src="Imagen/3.jpg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
         <h2 class="font-bold mt-2 text-sm">Standar Amiri</h2>
         <p class="text-xs text-gray-600 truncate">✓Material:lona ligera <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
@@ -292,7 +292,7 @@ button[disabled] {
       </div>
 
       <div class="producto border rounded-xl shadow-lg p-2 bg-white category-mochilas" data-agotado="falso">
-        <div class="agotado-overlay">AGOTADO</div>
+        <div class="precio-animado font-bold text-sm mt-1 agotado-overlay">AGOTADO</div>
         <img src="Imagen/4.jpg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
         <h2 class="font-bold mt-2 text-sm">Standar Adidas</h2>
         <p class="text-xs text-gray-600 truncate">✓Material:lona ligera <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
@@ -311,7 +311,7 @@ button[disabled] {
       </div>
 
       <div class="producto border rounded-xl shadow-lg p-2 bg-white category-mochilas" data-agotado="false">
-        <div class="agotado-overlay">AGOTADO</div>
+        <div class="precio-animado font-bold text-sm mt-1 agotado-overlay">AGOTADO</div>
         <img src="Imagen/5.jpg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
         <h2 class="font-bold mt-2 text-sm">Standar de Flores</h2>
         <p class="text-xs text-gray-600 truncate">✓Material:lona ligera <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
@@ -330,7 +330,70 @@ button[disabled] {
       </div>
 
       <div class="producto border rounded-xl shadow-lg p-2 bg-white category-mochilas" data-agotado="false">
-        <div class="agotado-overlay">AGOTADO</div>
+        <div class="precio-animado font-bold text-sm mt-1 agotado-overlay">AGOTADO</div>
+        <img src="Imagen/43.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Standar</h2>
+        <p class="text-xs text-gray-600 truncate">✓Material:Naylon <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">✓Medidas:45x30x20 (8kg) Mediana ✓4 compartimentos+laterales+de laptop ✓Buen equilibrio entre calidad, tamaño y precio</p>
+        <p class="precio-animado font-bold text-sm mt-1">$5500.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #050505" onclick="selectColor(this, 'Negro')"></button>
+          <button style="background-color: #5094af" onclick="selectColor(this, 'Azul claro')"></button>
+          <button style="background-color: #b99d8f" onclick="selectColor(this, 'Beich')"></button>
+          <button style="background-color: #94697d" onclick="selectColor(this, 'Rosa palo')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Mochila Satndar', 5500.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-mochilas" data-agotado="false">
+        <div class="precio-animado font-bold text-sm mt-1 agotado-overlay">AGOTADO</div>
+        <img src="Imagen/44.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        <h2 class="font-bold mt-2 text-sm">Extragrande </h2>
+        <p class="text-xs text-gray-600 truncate">✓Material:Poliester Impermiable Fuerte <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">✓Medidas:60x40x30 ✓4 compartimentos+laterales+de laptop ✓Cierres laterales y delanteros ✓Buen equilibrio entre calidad, tamaño y precio</p>
+        <p class="precio-animado font-bold text-sm mt-1">$9800.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #050505" onclick="selectColor(this, 'Negro')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Mochila Extragrande', 9800.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juegos de mesa" data-agotado="false">
+        <div class="precio-animado font-bold text-sm mt-1 agotado-overlay">AGOTADO</div>
+        <div class="flex gap-2">
+          <img src="Imagen/7.jpg" class="w-1/4 h-30 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+          <img src="Imagen/8.jpg" class="w-1/4 h-30 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+        </div>
+        <h2 class="font-bold mt-2 text-sm">Artesanales</h2>
+        <p class="text-xs text-gray-600 truncate"> Marcas: Nike, Adidas, Puma <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <p class="hidden text-xs">✓Material: Lona fuerte. ✓Medidas:55x35x25 (10kg) ✓3 compartimentos+laterales ✓Buen equilibrio entre calidad, tamaño y precio.</p>
+        <p class="precio-animado font-bold text-sm mt-1">$5000.00</p>
+        <div class="color-selector flex space-x-2 mt-2">
+          <button style="background-color: #7a7a7a" onclick="selectColor(this, 'Variada')"></button>
+        </div>
+        <span class="error-message color-error-message">Seleccione un color</span>
+        <div class="flex flex-col space-y-1 mt-2 text-xs">
+          <input type="number" min="1" value="1" class="border px-1 py-0.5 rounded" />
+          <input type="text" placeholder="Nombre del cliente*" class="border px-1 py-0.5 rounded nombre-cliente" required />
+          <span class="error-message nombre-error-message">Ingrese su nombre</span>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded hover:bg-purple-600 transition-all text-sm" onclick="addToCart('Mochila Artesanal marca:', 5000.00, this)">Añadir al carrito</button>
+        </div>
+      </div>
+
+      <div class="producto border rounded-xl shadow-lg p-2 bg-white category-mochilas" data-agotado="false">
+        <div class="precio-animado font-bold text-sm mt-1 agotado-overlay">AGOTADO</div>
         <img src="Imagen/8.jpg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
         <h2 class="font-bold mt-2 text-sm">Adidas (Artesanal)</h2>
         <p class="text-xs text-gray-600 truncate"> ✓Material: Lona fuerte. <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
@@ -349,7 +412,7 @@ button[disabled] {
       </div>
 
       <div class="producto border rounded-xl shadow-lg p-2 bg-white category-accesorios" data-agotado="false">
-        <div class="agotado-overlay">AGOTADO</div>
+        <div class="precio-animado font-bold text-sm mt-1 agotado-overlay">AGOTADO</div>
         <img src="Imagen/9.jpg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
         <h2 class="font-bold mt-2 text-sm">Sombrilla Grande</h2>
         <p class="text-xs text-gray-600 truncate">✓Mango curvo <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
@@ -942,8 +1005,8 @@ button[disabled] {
       <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juguetes" data-agotado="false">
         <div class="agotado-overlay">AGOTADO</div>
         <img src="Imagen/39.jpeg" class="producto-imagen w-full h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
-        <h2 class="font-bold mt-2 text-sm">Pqaquete de bolas </h2>
-        <p class="text-xs text-gray-600 truncate"> <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
+        <h2 class="font-bold mt-2 text-sm">Paquete de bolas </h2>
+        <p class="text-xs text-gray-600 truncate"> Posee 18 bolas <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
         <p class="hidden text-xs"></p>
         <p class="precio-animado font-bold text-sm mt-1">$600.00</p>
         <div class="color-selector flex space-x-2 mt-2">
@@ -961,9 +1024,9 @@ button[disabled] {
       <div class="producto border rounded-xl shadow-lg p-2 bg-white category-juegos de mesa" data-agotado="false">
         <div class="agotado-overlay">AGOTADO</div>
         <div class="flex gap-2">
-          <img src="Imagen/40.jpeg" class="w-1/3 h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
-          <img src="Imagen/41.jpeg" class="w-1/3 h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
-          <img src="Imagen/42.jpeg" class="w-1/3 h-32 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+          <img src="Imagen/40.jpeg" class="w-1/4 h-30 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+          <img src="Imagen/41.jpeg" class="w-1/4 h-30 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
+          <img src="Imagen/42.jpeg" class="w-1/4 h-30 object-cover cursor-pointer rounded" onclick="expandImage(this.src)" />
         </div>
         <h2 class="font-bold mt-2 text-sm">Cartas UNO</h2>
         <p class="text-xs text-gray-600 truncate">Modalidad: Flip, Mickey, Family, Princesa Sofía <button class="text-blue-500" onclick="toggleDescription(this)">Ver más</button></p>
