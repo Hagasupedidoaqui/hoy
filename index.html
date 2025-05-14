@@ -198,6 +198,42 @@ button[disabled] {
       from { transform: translateX(100%); }
       to { transform: translateX(0); }
     }
+
+    .whatsapp-float {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #7e147e;
+      color: white;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      transition: transform 0.3s ease-in-out;
+      animation: bounce 2s infinite;
+    }
+
+    .whatsapp-float:hover {
+      transform: scale(1.1);
+    }
+
+    @keyframes bounce {
+      0%, 100% { 
+        transform: translateY(0);
+       }
+      50% { 
+        transform: translate(-10px)
+      }
+    }
+
+    .whatsapp-icon {
+      font-size: 28px;
+    }
+    
   </style>
 </head>
 <body class="bg-yellow-50 text-gray-900">
@@ -1602,5 +1638,12 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
   </script>
+
+  <a href="https://wa.me/5352666216?text=Hola,%20por%20favor%20env%C3%ADame%20todos%20los%20productos%20disponibles." class="whatsapp-float" target="_blank" aria-label="Chatea por WhatsApp">
+    <svg class="whatsapp-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="28" height="28">
+      <path d="M12.004 2C6.478 2 2 6.484 2 12.017c0 1.981.518 3.902 1.503 5.592L2 22l4.528-1.47A9.969 9.969 0 0012.004 22C17.523 22 22 17.514 22 11.983 22 6.45 17.523 2 12.004 2zm.003 17.957c-1.56 0-3.09-.407-4.43-1.182l-.316-.188-2.68.87.875-2.613-.206-.342a8.102 8.102 0 01-1.275-4.343c0-4.464 3.63-8.096 8.03-8.096 4.398 0 7.973 3.632 7.973 8.096.002 4.462-3.575 8.096-8.001 8.096zm4.36-6.153c-.24-.12-1.418-.695-1.64-.774-.22-.078-.38-.119-.54.12-.16.237-.62.774-.76.933-.14.16-.28.179-.52.06-.24-.12-1.011-.372-1.924-1.187-.712-.635-1.193-1.42-1.33-1.658-.14-.238-.015-.366.105-.484.11-.109.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.31-.74-1.796-.195-.47-.39-.405-.54-.413l-.459-.007c-.16 0-.42.06-.64.298-.22.24-.84.82-.84 2 0 1.179.86 2.318.98 2.48.12.16 1.69 2.578 4.1 3.617.57.246 1.01.393 1.36.504.57.18 1.09.155 1.5.094.46-.07 1.418-.58 1.618-1.141.2-.56.2-1.04.14-1.141-.06-.1-.22-.16-.46-.28z"/>
+    </svg>
+  </a>
+  
 </body>
 </html>
