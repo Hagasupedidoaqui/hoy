@@ -233,6 +233,84 @@ button[disabled] {
     .whatsapp-icon {
       font-size: 28px;
     }
+
+    body {
+      margin: 5px;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      text-align: justify;
+      font-weight: 50px;
+    }
+
+    .texto-negrita {
+      font-weight: bold;
+    }
+
+    main {
+      flex: 1;
+      padding: 20px;
+    }
+    footer {
+      background: #d207ec;
+      padding: 20px;
+      text-align: center;
+      border-top: 1px solid #ccc;
+    }
+    .quienes-somos {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    body {
+      background: #910b7f;
+      font-family: Arial, sans-serif;
+    }
+
+    .wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    .social-container {
+      display: flex;
+      gap: 20px;
+      background: rgb(96, 7, 99);
+      padding: 20px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+      animation: fadeIn 1s ease-in-out;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #ffffff;
+      transition: transform 0.3s, color 0.3s;
+    }
+
+     .social-link:hover {
+      transform: scale(1.1);
+      color: #ffffff;
+    }
+
+    .social-link img {
+      width: 24px;
+      height: 24px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     
   </style>
 </head>
@@ -1644,6 +1722,29 @@ window.addEventListener('DOMContentLoaded', () => {
       <path d="M12.004 2C6.478 2 2 6.484 2 12.017c0 1.981.518 3.902 1.503 5.592L2 22l4.528-1.47A9.969 9.969 0 0012.004 22C17.523 22 22 17.514 22 11.983 22 6.45 17.523 2 12.004 2zm.003 17.957c-1.56 0-3.09-.407-4.43-1.182l-.316-.188-2.68.87.875-2.613-.206-.342a8.102 8.102 0 01-1.275-4.343c0-4.464 3.63-8.096 8.03-8.096 4.398 0 7.973 3.632 7.973 8.096.002 4.462-3.575 8.096-8.001 8.096zm4.36-6.153c-.24-.12-1.418-.695-1.64-.774-.22-.078-.38-.119-.54.12-.16.237-.62.774-.76.933-.14.16-.28.179-.52.06-.24-.12-1.011-.372-1.924-1.187-.712-.635-1.193-1.42-1.33-1.658-.14-.238-.015-.366.105-.484.11-.109.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.31-.74-1.796-.195-.47-.39-.405-.54-.413l-.459-.007c-.16 0-.42.06-.64.298-.22.24-.84.82-.84 2 0 1.179.86 2.318.98 2.48.12.16 1.69 2.578 4.1 3.617.57.246 1.01.393 1.36.504.57.18 1.09.155 1.5.094.46-.07 1.418-.58 1.618-1.141.2-.56.2-1.04.14-1.141-.06-.1-.22-.16-.46-.28z"/>
     </svg>
   </a>
+
+  <div class="quienes-somos">
+      <h2 class="texto-negrita">¿Quiénes somos?</h2>
+      <p>¡Bienvenidos a nuestra tienda online!</p>
+      <p>Encuentra mochilas, juguetes, juegos de mesa, bolsos para todas las edades 👜🎒🧸🪁 Explora nuestro catálogo y redes sociales y descubre productos llenos de estilo, diversión y calidad. ¡Regala sonridad con cada compra! </p>
+      <p>Envío a toda La Habana por un costo adicional 🛵🚲 Compra fácil, rápido y seguro.</p>
+      <p class="texto-negrita">¡Haz de cada momento una aventura!</p>
+    </div>
+
+    <div class="social-container">
+    <a href="https://www.facebook.com/php?id=61554789163420" class="social-link" target="_blank">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook">
+      Facebook
+    </a>
+    <a href="https://wa.me/5352666216" class="social-link" target="_blank">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp">
+      WhatsApp
+    </a>
+    <a href="tel:+5352666216" class="social-link">
+      <img src="https://cdn-icons-png.flaticon.com/512/724/724664.png" alt="Teléfono">
+      Llamar
+    </a>
+  </div>
   
 </body>
 </html>
