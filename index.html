@@ -279,8 +279,7 @@ body {
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s ease;
-    cursor: pointer;
-    
+    cursor: pointer;  
 }
 
 .product-img:hover {
@@ -691,6 +690,64 @@ body {
     z-index: 10;
 }
 
+/* Temporizador */
+.temporizador {
+  font-size: 1.4em;
+  font-weight: bold;
+  color: #ff4d4d;
+  animation: parpadeo 1s infinite;
+}
+@keyframes parpadeo {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.título-temporizador {
+  text-align: justify;
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 1px;
+  color: var(--danger);
+}
+
+/* Testimonios animados con colores llamativos */
+.testimonios {
+  position: relative;
+  height: 150px;
+  overflow: hidden;
+  background: none;
+  border-radius: 10px;
+  padding: 20px;
+}
+.titulo-testimonios {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  color: var(--danger);
+}
+.carrusel-horizontal {
+  display: flex;
+  flex-direction: row;
+  width: max-content;
+  transition: transform 1s;
+}
+.burbuja {
+  background: var(--white);
+  border: 2px dashed var(--danger);
+  border-radius: 25px;
+  padding: 8px 16px;
+  margin-right: 10px;
+  box-shadow: none;
+  min-width: 200px;
+  font-size: 0.85em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: bold;
+  color: var(--danger);
+}
+
 
 /* Animaciones */
 @keyframes pulse {
@@ -895,6 +952,10 @@ body {
                             <span class="price">$5900</span>
                             <span class="old-price">$6000/span>
                         </div>
+                        <p class="título-temporizador">OFERTA ESPECIAL</p>
+                        <div class="temporizador" data-tiempo="72:00:00">
+                            <span class="horas">72</span>:<span class="minutos">00</span>:<span class="segundos">00</span>
+                        </div>
                         <div class="product-actions">
                             <div class="quantity-selector">
                                 <button class="quantity-btn minus"><i class="fas fa-minus"></i></button>
@@ -921,6 +982,10 @@ body {
                             <span class="price">$5900</span>
                             <span class="old-price">$6000/span>
                         </div>
+                        <p class="título-temporizador">OFERTA ESPECIAL</p>
+                        <div class="temporizador" data-tiempo="72:00:00">
+                            <span class="horas">72</span>:<span class="minutos">00</span>:<span class="segundos">00</span>
+                        </div>
                         <div class="product-actions">
                             <div class="quantity-selector">
                                 <button class="quantity-btn minus"><i class="fas fa-minus"></i></button>
@@ -946,6 +1011,10 @@ body {
                         <div class="product-price">
                             <span class="price">$5900</span>
                         </div>
+                        <p class="título-temporizador">OFERTA ESPECIAL</p>
+                        <div class="temporizador" data-tiempo="72:00:00">
+                            <span class="horas">72</span>:<span class="minutos">00</span>:<span class="segundos">00</span>
+                        </div>
                         <div class="product-actions">
                             <div class="quantity-selector">
                                 <button class="quantity-btn minus"><i class="fas fa-minus"></i></button>
@@ -957,7 +1026,7 @@ body {
                     </div>
                 </div>
 
-                <div class="product-card" data-category="mochilas">
+                <div class="product-card out-of-stock" data-category="mochilas">
                     <div class="product-image">
                         <img src="Imagen/43.jpeg" alt="Standar" class="product-img">
                     </div>
@@ -996,6 +1065,11 @@ body {
                         </div>
                         <div class="product-price">
                             <span class="price">$9800</span>
+                            <span class="old-price">$10000/span>
+                        </div>
+                        <p class="título-temporizador">OFERTA ESPECIAL</p>
+                        <div class="temporizador" data-tiempo="96:00:00">
+                            <span class="horas">96</span>:<span class="minutos">00</span>:<span class="segundos">00</span>
                         </div>
                         <div class="product-actions">
                             <div class="quantity-selector">
@@ -1008,7 +1082,7 @@ body {
                     </div>
                 </div>
 
-                <div class="product-card" data-category="mochilas">
+                <div class="product-card out-of-stock" data-category="mochilas">
                     <div class="product-image">
                         <img src="Imagen/7.jpg" alt="Artesanal Adidas" class="product-img">
                     </div>
@@ -1034,7 +1108,7 @@ body {
                     </div>
                 </div>
 
-                <div class="product-card" data-category="mochilas">
+                <div class="product-card out-of-stock" data-category="mochilas">
                     <div class="product-image">
                         <img src="Imagen/8.jpg" alt="Artesanal Nike" class="product-img">
                     </div>
@@ -1060,7 +1134,7 @@ body {
                     </div>
                 </div>
 
-                <div class="product-card" data-category="mochilas">
+                <div class="product-card out-of-stock" data-category="mochilas">
                     <div class="product-image">
                         <img src="Imagen/46.jpeg" alt="Artesanal Puma" class="product-img">
                     </div>
@@ -3479,6 +3553,10 @@ Componentes:
                         <div class="product-price">
                             <span class="price">$3300</span>
                         </div>
+                        <p class="título-temporizador">OFERTA ESPECIAL</p>
+                        <div class="temporizador" data-tiempo="96:00:00">
+                            <span class="horas">96</span>:<span class="minutos">00</span>:<span class="segundos">00</span>
+                        </div>
                         <div class="product-actions">
                             <div class="quantity-selector">
                                 <button class="quantity-btn minus"><i class="fas fa-minus"></i></button>
@@ -4197,7 +4275,22 @@ Componentes:
         <span>¡Producto añadido al carrito!</span>
     </div>
 
+    <!-- Testimonios en carrusel horizontal circular con colores llamativos -->
+    <section class="testimonios">
+      <h2 class="titulo-testimonios">Testimonios</h2>
+      <div class="carrusel-horizontal" id="carruselTestimonios">
+        <div class="burbuja">Excelente servicio y productos de calidad. Gabriel</div>
+        <div class="burbuja">Muy rápido el envío, volveré a comprar. René</div>
+        <div class="burbuja">Atención al cliente de primera. Eli</div>
+        <div class="burbuja">Gran variedad de ofertas. Se los recomiendo. Arturito</div>
+        <div class="burbuja">Me encantó el servicio que me prestaron. Muchas gracias. Reynaldo</div>
+        <div class="burbuja">Me gustaría que tuvieran más ofertas de mochilas. Bertha</div>
+        <div class="burbuja">Hice mi catálogo con ellos y funciona al 100. IDEA</div>
+        <div class="burbuja">Uno de los mejores juguetes que he comprado. Sofía</div>
+      </div>
+
     <script>
+
 document.addEventListener('DOMContentLoaded', function () {
     // Variables globales
     let cart = [];
@@ -4517,7 +4610,57 @@ document.addEventListener('DOMContentLoaded', function () {
     renderPage(1);
     showBanner(0);
 });
-    
+
+    // Temporizador de 72 horas
+    function iniciarTemporizadores() {
+    document.querySelectorAll('.temporizador').forEach(el => {
+        let tiempo = 72 * 60 * 60;
+        const horas = el.querySelector('.horas');
+        const minutos = el.querySelector('.minutos');
+        const segundos = el.querySelector('.segundos');
+
+        function actualizar() {
+        if (tiempo <= 0) return;
+        const h = Math.floor(tiempo / 3600);
+        const m = Math.floor((tiempo % 3600) / 60);
+        const s = tiempo % 60;
+        horas.textContent = h.toString().padStart(2, '0');
+        minutos.textContent = m.toString().padStart(2, '0');
+        segundos.textContent = s.toString().padStart(2, '0');
+        tiempo--;
+        }
+        setInterval(actualizar, 1000);
+        actualizar();
+    });
+    }
+
+    // Carrusel circular horizontal de testimonios
+    function iniciarCarrusel() {
+    const carrusel = document.getElementById('carruselTestimonios');
+
+    setInterval(() => {
+        const primero = carrusel.children[0];
+        const ancho = primero.offsetWidth + 10;
+
+        carrusel.style.transition = 'transform 1s';
+        carrusel.style.transform = `translateX(-${ancho}px)`;
+
+        setTimeout(() => {
+        carrusel.appendChild(primero);
+        carrusel.style.transition = 'none';
+        carrusel.style.transform = 'translateX(0)';
+        }, 1000);
+
+    }, 4000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+    iniciarTemporizadores();
+    iniciarCarrusel();
+    });
+
+   
+
     // Filtro por categoría
     document.getElementById('category-filter').addEventListener('change', function() {
         const selected = this.value;
