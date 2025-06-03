@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="yJcirMFpWcFvl74tk33ADUcDUK-u3lQfvB2E_b_D_pk" />
     <title>ColorShop - Tienda Online</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
@@ -879,13 +878,46 @@ body {
   margin-bottom: 5px;
 }
 
+.top-clock {
+            position: fixed;
+            top: 20px;
+            right: 100px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-family: 'Arial', sans-serif;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .top-clock:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.05);
+        }
+        
+        .time-part {
+            padding: 0 3px;
+            font-weight: bold;
+        }
+        
+        .separator {
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
 
 </style>
 
 </head>
 <body>
-    
-    
     
     <!-- Header con logo y carrito -->
     <header class="header">
@@ -900,6 +932,15 @@ body {
             </div>
         </div>
     </header>
+
+    <!-- El reloj se posicionará fijo en la esquina superior derecha -->
+    <div class="top-clock" id="topClock">
+        <span class="time-part" id="topHours">00</span>
+        <span class="separator">:</span>
+        <span class="time-part" id="topMinutes">00</span>
+        <span class="separator">:</span>
+        <span class="time-part" id="topSeconds">00</span>
+    </div>
 
     <!-- Carrusel de banners -->
     <section class="banner-carousel">
@@ -998,10 +1039,6 @@ body {
                             <span class="price">$5900</span>
                             <span class="old-price">$6000/span>
                         </div>
-                        <p class="título-temporizador">OFERTA ESPECIAL</p>
-                        <div class="temporizador" data-tiempo="72:00:00">
-                            <span class="horas">72</span>:<span class="minutos">00</span>:<span class="segundos">00</span>
-                        </div>
                         <div class="product-actions">
                             <div class="quantity-selector">
                                 <button class="quantity-btn minus"><i class="fas fa-minus"></i></button>
@@ -1028,10 +1065,6 @@ body {
                             <span class="price">$5900</span>
                             <span class="old-price">$6000/span>
                         </div>
-                        <p class="título-temporizador">OFERTA ESPECIAL</p>
-                        <div class="temporizador" data-tiempo="72:00:00">
-                            <span class="horas">72</span>:<span class="minutos">00</span>:<span class="segundos">00</span>
-                        </div>
                         <div class="product-actions">
                             <div class="quantity-selector">
                                 <button class="quantity-btn minus"><i class="fas fa-minus"></i></button>
@@ -1056,10 +1089,6 @@ body {
                         </div>
                         <div class="product-price">
                             <span class="price">$5900</span>
-                        </div>
-                        <p class="título-temporizador">OFERTA ESPECIAL</p>
-                        <div class="temporizador" data-tiempo="72:00:00">
-                            <span class="horas">72</span>:<span class="minutos">00</span>:<span class="segundos">00</span>
                         </div>
                         <div class="product-actions">
                             <div class="quantity-selector">
@@ -1113,10 +1142,6 @@ body {
                             <span class="price">$9800</span>
                             <span class="old-price">$10000/span>
                         </div>
-                        <p class="título-temporizador">OFERTA ESPECIAL</p>
-                        <div class="temporizador" data-tiempo="96:00:00">
-                            <span class="horas">96</span>:<span class="minutos">00</span>:<span class="segundos">00</span>
-                        </div>
                         <div class="product-actions">
                             <div class="quantity-selector">
                                 <button class="quantity-btn minus"><i class="fas fa-minus"></i></button>
@@ -1128,7 +1153,7 @@ body {
                     </div>
                 </div>
 
-                <div class="product-card out-of-stock" data-category="mochilas">
+                <div class="product-card" data-category="mochilas">
                     <div class="product-image">
                         <img src="Imagen/7.jpg" alt="Artesanal Adidas" class="product-img">
                     </div>
@@ -1154,7 +1179,7 @@ body {
                     </div>
                 </div>
 
-                <div class="product-card out-of-stock" data-category="mochilas">
+                <div class="product-card" data-category="mochilas">
                     <div class="product-image">
                         <img src="Imagen/8.jpg" alt="Artesanal Nike" class="product-img">
                     </div>
@@ -1180,7 +1205,7 @@ body {
                     </div>
                 </div>
 
-                <div class="product-card out-of-stock" data-category="mochilas">
+                <div class="product-card" data-category="mochilas">
                     <div class="product-image">
                         <img src="Imagen/46.jpeg" alt="Artesanal Puma" class="product-img">
                     </div>
@@ -3599,10 +3624,6 @@ Componentes:
                         <div class="product-price">
                             <span class="price">$3300</span>
                         </div>
-                        <p class="título-temporizador">OFERTA ESPECIAL</p>
-                        <div class="temporizador" data-tiempo="96:00:00">
-                            <span class="horas">96</span>:<span class="minutos">00</span>:<span class="segundos">00</span>
-                        </div>
                         <div class="product-actions">
                             <div class="quantity-selector">
                                 <button class="quantity-btn minus"><i class="fas fa-minus"></i></button>
@@ -4337,6 +4358,27 @@ Componentes:
 
     <script>
 
+        function updateTopClock() {
+            const now = new Date();
+            
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            let seconds = now.getSeconds();
+            
+            hours = hours < 10 ? '0' + hours : hours;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            
+            document.getElementById('topHours').textContent = hours;
+            document.getElementById('topMinutes').textContent = minutes;
+            document.getElementById('topSeconds').textContent = seconds;
+            
+            setTimeout(updateTopClock, 1000);
+        }
+        
+        // Iniciar el reloj
+        updateTopClock();
+
 document.addEventListener('DOMContentLoaded', function () {
     // Variables globales
     let cart = [];
@@ -4719,6 +4761,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+
 
     </script>
 </body>
