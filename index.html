@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Online Profesional</title>
+    <title>Catálogo Online Haga su pedido aquí</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
- /* Reset y estilos base */
+        /* Reset y estilos base */
         * {
             margin: 0;
             padding: 0;
@@ -46,13 +46,13 @@
         }
 
         .logo img {
-            height: 40px;
-            margin-right: 5px;
+            height: 50px;
+            margin-right: 10px;
         }
 
         .logo h1 {
-            font-size: 1.1rem;
-            font-weight: 500;
+            font-size: 1.5rem;
+            font-weight: 700;
         }
 
         /* Estilos del reloj */
@@ -60,7 +60,7 @@
             background-color: #34495e;
             padding: 8px 15px;
             border-radius: 20px;
-            font-size: 0.7rem;
+            font-size: 0.9rem;
             font-weight: 600;
         }
 
@@ -217,10 +217,11 @@
 
         /* Estilos de las tarjetas de productos */
         .products-container {
-            display: flex;
+            display: grid;
             flex-wrap: wrap;
+            grid-template-columns: repeat(2, 1fr);
             justify-content: center;
-            gap: 25px;
+            gap: 20px;
         }
 
         .product-card {
@@ -305,7 +306,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.3s;
-            flex: 2;
+            flex: 1;
             text-align: center;
             text-decoration: none;
             font-size: 0.9rem;
@@ -321,12 +322,12 @@
         }
 
         .btn-whatsapp {
-            background-color: #1a9447;
+            background-color: #3eb96b;
             color: white;
         }
 
         .btn-whatsapp:hover {
-            background-color: #8c1612;
+            background-color: #128C7E;
         }
 
         /* Estilos del carrusel */
@@ -339,7 +340,7 @@
 
         .carousel-container {
             display: flex;
-            transition: transform 0.3s ease;
+            transition: transform 0.5s ease;
             width: 100%;
         }
 
@@ -590,6 +591,10 @@
             .logo {
                 margin-bottom: 10px;
             }
+
+            .logo h1 {
+                font-size: 1.1rem;
+            }
             
             .menu {
                 flex-wrap: wrap;
@@ -607,7 +612,7 @@
 
         @media (max-width: 576px) {
             .logo h1 {
-                display: inside;
+                display: 1.3rem;
             }
             
             .product-card {
@@ -651,14 +656,14 @@
     align-items: center;
     gap: 15px;
 }
-    </style>
+
+</style>
 </head>
 <body>
     <!-- Encabezado -->
     <header>
         <div class="header-container">
             <div class="logo">
-                <img src="https://via.placeholder.com/50" alt="Logo">
                 <h1>Haga su pedido Aquí</h1>
                        
             <nav class="nav-container">
@@ -750,14 +755,21 @@
             
             <div class="cart-total">
                 Total: <span id="cart-total">$0.00</span>
-            </div>
+            
+<div style="text-align: right; margin-top: 15px;">
+    <a id="whatsapp-checkout" class="btn btn-whatsapp" target="_blank" style="display: inline-block; padding: 10px 20px; text-align: center;">
+        <i class="fab fa-whatsapp"></i> Comprar por WhatsApp
+    </a>
+</div>
+
+</div>
         </div>
     </div>
     
-    <!-- Modal de contacto -->
+     <!-- Modal de contacto -->
     <div class="contact-modal" id="contact-modal">
         <div class="contact-content">
-            <img src="https://via.placeholder.com/100" alt="Logo" class="contact-logo">
+            <h1>Haga su pedido Aquí</h1>
             
             <div class="contact-info">
                 <p><i class="fas fa-phone"></i> Teléfono: +53 52666216</p>
@@ -766,9 +778,8 @@
             </div>
             
             <div class="social-links">
-                <a href="#" class="social-link facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="social-link instagram"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="social-link whatsapp"><i class="fab fa-whatsapp"></i></a>
+                <a href="https://www.facebook.com/profile.php?id=61554789163420" class="social-link facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://wa.me/5352666216" class="social-link whatsapp"><i class="fab fa-whatsapp"></i></a>
             </div>
             
             <a href="tel:+53532666216" class="call-button">
@@ -1777,7 +1788,7 @@
 
         // Variables globales
         let cart = [];
-        let currentCurrency = 'CUP o USD' ; // Puede ser 'USD' o 'CUP'
+        let currentCurrency = 'CUP'; // Puede ser 'USD' o 'CUP'
         let carouselInterval;
         let currentCarouselIndex = 0;
 
@@ -1791,8 +1802,8 @@
             generateProducts(products);
             
             // Generar carrusel con productos destacados
-            generateCarousel([products[1], products[3], products[6], products[9]]);
-
+            generateCarousel([products[0], products[3], products[6], products[9]]);
+            
             // Iniciar animación del carrusel
             startCarousel();
             
@@ -1837,80 +1848,38 @@
             document.getElementById('real-time-clock').textContent = `${dateString} - ${timeString}`;
         }
 
-        let currentPage = 1;
-        const itemsPerPage = 10;
-
-function generateProducts(productsToShow) {
-    const container = document.getElementById('products-container');
-    container.innerHTML = '';
-
-    const totalPages = Math.ceil(productsToShow.length / itemsPerPage);
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-
-    const paginatedProducts = productsToShow.slice(start, end);
-
-    paginatedProducts.forEach(product => {
-        const productCard = document.createElement('div');
-        productCard.className = 'product-card';
-        productCard.innerHTML = `
-            <div class="product-card-inner">
-                <div class="product-card-front">
-                    <img src="${product.image}" alt="${product.name}" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-name">${product.name}</h3>
-                        <p class="product-price">${currentCurrency === 'USD' ? `$${product.price.toFixed(2)}` : `${product.priceCUP} CUP`}</p>
+        function generateProducts(productsToShow) {
+            const container = document.getElementById('products-container');
+            container.innerHTML = '';
+            
+            productsToShow.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <div class="product-card-inner">
+                        <div class="product-card-front">
+                            <img src="${product.image}" alt="${product.name}" class="product-image">
+                            <div class="product-info">
+                                <h3 class="product-name">${product.name}</h3>
+                                <p class="product-price">${currentCurrency === 'USD' ? `$${product.price.toFixed(2)}` : `${product.priceCUP} CUP`}</p>
+                            </div>
+                        </div>
+                        <div class="product-card-back">
+                            <h3 class="product-name">${product.name}</h3>
+                            <p class="product-price">${currentCurrency === 'USD' ? `$${product.price.toFixed(2)}` : `${product.priceCUP} CUP`}</p>
+                            <p class="product-description">${product.description}</p>
+                            <div class="product-buttons">
+                                <button class="btn btn-add" onclick="addToCart(${product.id})">Añadir</button>
+                                <a href="https://wa.me/5352666216?text=Me%20interesa%20comprar%20el%20siguiente%20producto:%20${encodeURIComponent(product.name)}%20-%20${currentCurrency === 'USD' ? `$${product.price.toFixed(2)}` : `${product.priceCUP} CUP`}" class="btn btn-whatsapp" target="_blank">
+                                    <i class="fab fa-whatsapp"></i>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="product-card-back">
-                    <h3 class="product-name">${product.name}</h3>
-                    <p class="product-price">${currentCurrency === 'USD' ? `$${product.price.toFixed(2)}` : `${product.priceCUP} CUP`}</p>
-                    <p class="product-description">${product.description}</p>
-                    <div class="product-buttons">
-                        <button class="btn btn-add" onclick="addToCart(${product.id})">Añadir</button>
-                        <a href="https://wa.me/5353235357?text=Me%20interesa%20comprar%20el%20siguiente%20producto:%20${encodeURIComponent(product.name)}%20-%20${currentCurrency === 'USD' ? `$${product.price.toFixed(2)}` : `${product.priceCUP} CUP`}" class="btn btn-whatsapp" target="_blank">
-                            <i class="fab fa-whatsapp"></i> 
-                        </a>
-                    </div>
-                </div>
-            </div>
-        `;
-        container.appendChild(productCard);
-    });
-
-    generatePaginationControls(totalPages, productsToShow);
-}
-    
-    function generatePaginationControls(totalPages, productsToShow) {
-    let paginationContainer = document.getElementById('pagination-controls');
-    if (!paginationContainer) {
-        paginationContainer = document.createElement('div');
-        paginationContainer.id = 'pagination-controls';
-        paginationContainer.style.textAlign = 'center';
-        paginationContainer.style.marginTop = '20px';
-        document.getElementById('all-products').appendChild(paginationContainer);
-    }
-
-    paginationContainer.innerHTML = '';
-    for (let i = 1; i <= totalPages; i++) {
-        const btn = document.createElement('button');
-        btn.textContent = i;
-        btn.className = 'btn';
-        if (i === currentPage) {
-            btn.style.backgroundColor = '#e74c3c';
-            btn.style.color = 'white';
-        } else {
-            btn.style.backgroundColor = '#ecf0f1';
+                `;
+                container.appendChild(productCard);
+            });
         }
-
-        btn.addEventListener('click', () => {
-            currentPage = i;
-            generateProducts(productsToShow);
-        });
-
-        paginationContainer.appendChild(btn);
-    }
-}
 
         function generateCarousel(featuredProducts) {
             const container = document.getElementById('carousel-container');
@@ -1935,8 +1904,8 @@ function generateProducts(productsToShow) {
                                 <p class="product-description">${product.description}</p>
                                 <div class="product-buttons">
                                     <button class="btn btn-add" onclick="addToCart(${product.id})">Añadir</button>
-                                    <a href="https://wa.me/5353235357?text=Me%20interesa%20comprar%20el%20siguiente%20producto:%20${encodeURIComponent(product.name)}%20-%20${currentCurrency === 'CUP' ? `$${product.price.toFixed(2)}` : `${product.priceCUP} CUP`}" class="btn btn-whatsapp" target="_blank">
-                                        <i class="fab fa-whatsapp"></i> WhatsApp
+                                    <a href="https://wa.me/5352666216?text=Me%20interesa%20comprar%20el%20siguiente%20producto:%20${encodeURIComponent(product.name)}%20-%20${currentCurrency === 'USD' ? `$${product.price.toFixed(2)}` : `${product.priceCUP} CUP`}" class="btn btn-whatsapp" target="_blank">
+                                        <i class="fab fa-whatsapp"></i> 
                                     </a>
                                 </div>
                             </div>
@@ -2075,10 +2044,6 @@ function generateProducts(productsToShow) {
 
         function addToCart(productId) {
             const product = products.find(p => p.id === productId);
-    if (!product || product.stock === 0) {
-        alert("Este producto está agotado.");
-        return;
-    }
             
             if (!product) return;
             
@@ -2156,6 +2121,7 @@ function generateProducts(productsToShow) {
                 updateCartTotal();
             }
             
+            updateWhatsAppCheckoutLink();
             modal.style.display = 'flex';
         }
 
@@ -2186,15 +2152,113 @@ function generateProducts(productsToShow) {
         function applyDiscount() {
             const discountCode = document.getElementById('discount-code').value;
             
-            if (discountCode.toUpperCase() === 'descuento5') {
-                alert('¡Descuento del 5% aplicado!');
+            if (discountCode.toUpperCase() === 'DESCUENTO20') {
+                alert('¡Descuento del 20% aplicado!');
                 // Aquí iría la lógica para aplicar el descuento al total
             } else {
                 alert('Código de descuento no válido');
             }
         }
 
-        // Funciones globales
+        
+function updateWhatsAppCheckoutLink() {
+    const link = document.getElementById('whatsapp-checkout');
+    if (!link) return;
+
+    if (cart.length === 0) {
+        link.style.display = 'none';
+        return;
+    }
+
+    link.style.display = 'inline-block';
+    let message = 'Hola, quiero hacer el siguiente pedido:\n\n';
+    cart.forEach(item => {
+        message += `- ${item.quantity} x ${item.name} (${item.currency === 'USD' ? `$${item.price.toFixed(2)}` : `${item.price} CUP`})\n`;
+    });
+
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    message += `\nTotal: ${cart[0].currency === 'USD' ? `$${total.toFixed(2)}` : `${total} CUP`}`;
+
+    link.href = `https://wa.me/5352666216?text=${encodeURIComponent(message)}`;
+}
+    
+    
+let currentPage = 1;
+const itemsPerPage = 10;
+
+function generateProducts(productsToShow) {
+    const container = document.getElementById('products-container');
+    container.innerHTML = '';
+
+    const totalPages = Math.ceil(productsToShow.length / itemsPerPage);
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+
+    const paginatedProducts = productsToShow.slice(start, end);
+
+    paginatedProducts.forEach(product => {
+        const productCard = document.createElement('div');
+        productCard.className = 'product-card';
+        productCard.innerHTML = `
+            <div class="product-card-inner">
+                <div class="product-card-front">
+                    <img src="${product.image}" alt="${product.name}" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">${product.name}</h3>
+                        <p class="product-price">${currentCurrency === 'USD' ? `$${product.price.toFixed(2)}` : `${product.priceCUP} CUP`}</p>
+                    </div>
+                </div>
+                <div class="product-card-back">
+                    <h3 class="product-name">${product.name}</h3>
+                    <p class="product-price">${currentCurrency === 'USD' ? `$${product.price.toFixed(2)}` : `${product.priceCUP} CUP`}</p>
+                    <p class="product-description">${product.description}</p>
+                    <div class="product-buttons">
+                        <button class="btn btn-add" onclick="addToCart(${product.id})">Añadir</button>
+                        <a href="https://wa.me/5352666216?text=Me%20interesa%20comprar%20el%20siguiente%20producto:%20${encodeURIComponent(product.name)}%20-%20${currentCurrency === 'USD' ? `$${product.price.toFixed(2)}` : `${product.priceCUP} CUP`}" class="btn btn-whatsapp" target="_blank">
+                            <i class="fab fa-whatsapp"></i> 
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.appendChild(productCard);
+    });
+
+    generatePaginationControls(totalPages, productsToShow);
+}
+    
+    function generatePaginationControls(totalPages, productsToShow) {
+    let paginationContainer = document.getElementById('pagination-controls');
+    if (!paginationContainer) {
+        paginationContainer = document.createElement('div');
+        paginationContainer.id = 'pagination-controls';
+        paginationContainer.style.textAlign = 'center';
+        paginationContainer.style.marginTop = '20px';
+        document.getElementById('all-products').appendChild(paginationContainer);
+    }
+
+    paginationContainer.innerHTML = '';
+    for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i;
+        btn.className = 'btn';
+        if (i === currentPage) {
+            btn.style.backgroundColor = '#e74c3c';
+            btn.style.color = 'white';
+        } else {
+            btn.style.backgroundColor = '#ecf0f1';
+        }
+
+        btn.addEventListener('click', () => {
+            currentPage = i;
+            generateProducts(productsToShow);
+        });
+
+        paginationContainer.appendChild(btn);
+    }
+}
+    
+// Funciones globales
         window.addToCart = addToCart;
         window.removeFromCart = removeFromCart;
     </script>
