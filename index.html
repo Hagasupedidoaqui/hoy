@@ -693,6 +693,45 @@
       }
     }
 
+    .promo-banner {
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            background-color: #0638db;
+            cursor: pointer;
+        }
+        
+        .promo-video {
+            width: 100%;
+            display: block;
+            object-fit: cover;
+        }
+        
+        .promo-mute-indicator {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        .promo-mute-indicator svg {
+            margin-right: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .promo-mute-indicator {
+                font-size: 10px;
+                padding: 3px 8px;
+            }
+        }    
+
 </style>
 </head>
 <body>
@@ -747,7 +786,24 @@
             <span>¡OFERTAS IMPERDIBLES esta semana en Haga su pedido aquí! 🚲 Envío GRATIS compras mayores a 20 productos - ¡Colores, descuentos y más sorpresas te esperan! Contacta ya al 52666216.  Rebaja: Compras mayores a 10 productos </span>
         </div>
     </div>
-    
+
+    <div class="promo-banner" id="promoBanner">
+        <video class="promo-video" playsinline autoplay muted loop>
+            <source src="cactus.mp4" type="video/mp4">
+            Tu navegador no soporta el elemento de video.
+        </video>
+        <div class="promo-mute-indicator" id="muteIndicator">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                <line x1="12" y1="19" x2="12" y2="23"></line>
+                <line x1="8" y1="23" x2="16" y2="23"></line>
+            </svg>
+            Click para activar sonido
+        </div>
+    </div>
+
+        
     <!-- Contenido principal -->
     <main class="main-content">
         <section id="featured-products">
@@ -780,15 +836,7 @@
             <div class="cart-items" id="cart-items">
                 <!-- Los items del carrito se generarán con JavaScript -->
             </div>
-            
-            <div class="discount-section">
-                <h4>Aplicar Código de Descuento</h4>
-                <div class="discount-input">
-                    <input type="text" id="discount-code" placeholder="Ingresa tu código">
-                    <button class="btn btn-apply" id="apply-discount">Aplicar</button>
-                </div>
-            </div>
-            
+                       
             <div class="cart-total">
                 Total: <span id="cart-total">$0.00</span>
             
@@ -837,6 +885,8 @@
     </a>
     
     <script>
+
+
         // Datos de productos
         const products = [
             {
@@ -1874,8 +1924,6 @@
                 });
             });
             
-            // Event listener para aplicar descuento
-            document.getElementById('apply-discount').addEventListener('click', applyDiscount);
             
             // Cerrar modales al hacer clic fuera
             window.addEventListener('click', function(event) {
@@ -2197,18 +2245,7 @@
                 cart[0]?.currency === 'USD' ? `$${total.toFixed(2)}` : `${total} CUP`;
         }
 
-        function applyDiscount() {
-            const discountCode = document.getElementById('discount-code').value;
-            
-            if (discountCode.toUpperCase() === 'DESCUENTO20') {
-                alert('¡Descuento del 20% aplicado!');
-                // Aquí iría la lógica para aplicar el descuento al total
-            } else {
-                alert('Código de descuento no válido');
-            }
-        }
-
-        
+                
 function updateWhatsAppCheckoutLink() {
     const link = document.getElementById('whatsapp-checkout');
     if (!link) return;
@@ -2306,6 +2343,52 @@ function generateProducts(productsToShow) {
     }
 }
     
+const promoBanner = document.getElementById('promoBanner');
+        const video = document.querySelector('.promo-video');
+        const muteIndicator = document.getElementById('muteIndicator');
+        
+        // Configuración inicial
+        let isMuted = true;
+        
+        // Manejar el clic en el banner
+        promoBanner.addEventListener('click', function() {
+            isMuted = !isMuted;
+            video.muted = isMuted;
+            
+            if (isMuted) {
+                muteIndicator.innerHTML = `
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                    </svg>
+                    Click para activar sonido
+                `;
+            } else {
+                muteIndicator.innerHTML = `
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    </svg>
+                    Sonido activado
+                `;
+            }
+        });
+        
+        // Asegurar que el video mantenga la relación de aspecto en diferentes tamaños
+        function adjustVideoSize() {
+            const videoRatio = 16 / 9; // Cambia esto según la relación de aspecto de tu video
+            const bannerWidth = promoBanner.offsetWidth;
+            const idealHeight = bannerWidth / videoRatio;
+            
+            video.style.height = `${idealHeight}px`;
+        }
+        
+        // Ajustar al cargar y al redimensionar
+        window.addEventListener('load', adjustVideoSize);
+        window.addEventListener('resize', adjustVideoSize);
+
 // Funciones globales
         window.addToCart = addToCart;
         window.removeFromCart = removeFromCart;
