@@ -695,42 +695,37 @@
 
     .promo-banner {
             width: 100%;
+            background: #000;
             position: relative;
             overflow: hidden;
-            background-color: #0638db;
-            cursor: pointer;
         }
-        
         .promo-video {
             width: 100%;
+            height: auto;
             display: block;
-            object-fit: cover;
+            /* Forzar aceleración por hardware */
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000;
         }
-        
         .promo-mute-indicator {
             position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background-color: rgba(0, 0, 0, 0.7);
+            bottom: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.6);
             color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-family: Arial, sans-serif;
             display: flex;
             align-items: center;
-            z-index: 10;
         }
-        
         .promo-mute-indicator svg {
-            margin-right: 5px;
+            width: 12px;
+            height: 12px;
+            margin-right: 4px;
         }
-        
-        @media (max-width: 768px) {
-            .promo-mute-indicator {
-                font-size: 10px;
-                padding: 3px 8px;
-            }
-        }    
 
 </style>
 </head>
@@ -788,18 +783,16 @@
     </div>
 
     <div class="promo-banner" id="promoBanner">
-        <video class="promo-video" playsinline autoplay muted loop>
+        <!-- Video optimizado con poster para carga rápida -->
+        <video class="promo-video" playsinline autoplay muted loop preload="auto" poster="poster.jpg">
+            <!-- Fuentes alternativas para mejor compatibilidad -->
+            <source src="Imagen/cactu.mp4" type="video/mp4">
             <source src="Imagen/cactus.mp4" type="video/mp4">
-            Tu navegador no soporta el elemento de video.
+            Tu navegador no soporta video HTML5.
         </video>
         <div class="promo-mute-indicator" id="muteIndicator">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                <line x1="12" y1="19" x2="12" y2="23"></line>
-                <line x1="8" y1="23" x2="16" y2="23"></line>
-            </svg>
-            Click para activar sonido
+            <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+            Click para sonido
         </div>
     </div>
 
@@ -2343,51 +2336,94 @@ function generateProducts(productsToShow) {
     }
 }
     
-const promoBanner = document.getElementById('promoBanner');
-        const video = document.querySelector('.promo-video');
-        const muteIndicator = document.getElementById('muteIndicator');
-        
-        // Configuración inicial
-        let isMuted = true;
-        
-        // Manejar el clic en el banner
-        promoBanner.addEventListener('click', function() {
-            isMuted = !isMuted;
-            video.muted = isMuted;
+ // Script optimizado para bajo consumo de recursos
+        document.addEventListener('DOMContentLoaded', function() {
+            const promoContainer = document.getElementById('promoContainer');
+            const video = document.querySelector('.promo-video');
+            const promoControls = document.getElementById('promoControls');
             
-            if (isMuted) {
-                muteIndicator.innerHTML = `
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                        <line x1="12" y1="19" x2="12" y2="23"></line>
-                        <line x1="8" y1="23" x2="16" y2="23"></line>
-                    </svg>
-                    Click para activar sonido
-                `;
-            } else {
-                muteIndicator.innerHTML = `
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                    </svg>
-                    Sonido activado
-                `;
+            // Estado inicial
+            let isMuted = true;
+            
+            // 1. Optimización: Precarga inteligente
+            video.setAttribute('preload', 'auto');
+            
+            // 2. Optimización: Intersection Observer para pausar cuando no es visible
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Intenta reproducir solo si está visible
+                        const playPromise = video.play();
+                        
+                        if (playPromise !== undefined) {
+                            playPromise.catch(error => {
+                                console.log('Autoplay prevenido:', error);
+                                // Mostrar botón de play si es necesario
+                            });
+                        }
+                    } else {
+                        video.pause();
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            observer.observe(video);
+            
+            // 3. Control de sonido optimizado
+            function toggleSound() {
+                isMuted = !isMuted;
+                video.muted = isMuted;
+                
+                if (isMuted) {
+                    promoControls.innerHTML = `
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                        </svg>
+                        <span>Click para sonido</span>
+                    `;
+                } else {
+                    promoControls.innerHTML = `
+                        <svg viewBox="0 0 24 24">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                        </svg>
+                        <span>Sonido activado</span>
+                    `;
+                }
             }
-        });
-        
-        // Asegurar que el video mantenga la relación de aspecto en diferentes tamaños
-        function adjustVideoSize() {
-            const videoRatio = 16 / 9; // Cambia esto según la relación de aspecto de tu video
-            const bannerWidth = promoBanner.offsetWidth;
-            const idealHeight = bannerWidth / videoRatio;
             
-            video.style.height = `${idealHeight}px`;
-        }
-        
-        // Ajustar al cargar y al redimensionar
-        window.addEventListener('load', adjustVideoSize);
-        window.addEventListener('resize', adjustVideoSize);
+            // Eventos optimizados
+            promoControls.addEventListener('click', toggleSound);
+            promoContainer.addEventListener('click', function(e) {
+                if (e.target === promoContainer) {
+                    toggleSound();
+                }
+            });
+            
+            // 4. Fallback para autoplay bloqueado en móviles
+            function attemptPlay() {
+                video.play().catch(e => {
+                    console.log('Autoplay bloqueado:', e);
+                    // Aquí podrías mostrar un botón de play manual
+                });
+            }
+            
+            // Intentar reproducir después de interacción del usuario
+            document.addEventListener('click', attemptPlay, { once: true });
+            document.addEventListener('touchstart', attemptPlay, { once: true });
+            
+            // 5. Ajuste de tamaño responsivo
+            function resizeVideo() {
+                const containerWidth = promoContainer.offsetWidth;
+                // Relación de aspecto 16:9 (ajustar según tu video)
+                const videoHeight = (containerWidth * 9) / 16;
+                video.style.height = `${videoHeight}px`;
+            }
+            
+            window.addEventListener('load', resizeVideo);
+            window.addEventListener('resize', resizeVideo);
+        });
 
 // Funciones globales
         window.addToCart = addToCart;
