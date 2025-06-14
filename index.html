@@ -726,6 +726,64 @@
             height: 12px;
             margin-right: 4px;
         }
+    
+        .comments-section {
+            position: relative;
+            height: 150px;
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+        }
+        
+        .note {
+            position: absolute;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        
+        .note.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .note__inner {
+            display: flex;
+            padding: 10px 0;
+        }
+        
+        .note-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            object-fit: cover;
+            background-color: #e0e0e0;
+        }
+        
+        .note-content {
+            flex: 1;
+        }
+        
+        .note-user {
+            font-weight: 600;
+            margin-bottom: 3px;
+            color: #333;
+            font-size: 15px;
+        }
+        
+        .note-text {
+            color: #555;
+            line-height: 1.4;
+            font-size: 14px;
+        }
+        
+        .note-time {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
 
 </style>
 </head>
@@ -864,6 +922,52 @@
             </a>
         </div>
     </div>
+        
+        <div class="comments-section" id="commentsCarousel">
+        <div class="note">
+            <div class="note__inner">
+                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Usuario" class="note-avatar">
+                <div class="note-content">
+                    <div class="note-user">María López</div>
+                    <div class="note-text">Me gustó la atención! Excelente trato. </div>
+                    <div class="note-time">Hace 45 minutos</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="note">
+            <div class="note__inner">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Usuario" class="note-avatar">
+                <div class="note-content">
+                    <div class="note-user">Carlos Martínez</div>
+                    <div class="note-text">Me gustaron mucho los monopolios.</div>
+                    <div class="note-time">Hace 2 días</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="note">
+            <div class="note__inner">
+                <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Usuario" class="note-avatar">
+                <div class="note-content">
+                    <div class="note-user">Karla Sánchez</div>
+                    <div class="note-text">Los niños quedaron contentísimos con los Legos.</div>
+                    <div class="note-time">Hace 1 hora</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="note">
+            <div class="note__inner">
+                <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Usuario" class="note-avatar">
+                <div class="note-content">
+                    <div class="note-user">Juanito L.</div>
+                    <div class="note-text">¿Tienes pensado vender otros modelos de mochilas?</div>
+                    <div class="note-time">Hace 3 días</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Botón flotante para compartir el catálogo por WhatsApp con ícono -->
     <a
@@ -874,7 +978,7 @@
         <svg class="whatsapp-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.031-.967-.273-.099-.472-.148-.672.15-.198.297-.768.967-.941 1.164-.173.198-.347.223-.644.074-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.447-.52.15-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.149-.672-1.611-.921-2.207-.242-.579-.487-.5-.672-.51-.173-.008-.372-.01-.571-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.064 2.875 1.213 3.074.149.198 2.095 3.2 5.077 4.487.709.306 1.262.489 1.693.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347z"/>
         </svg>
-        Compartir Catálogo
+        Compartir
     </a>
     
     <script>
@@ -2423,6 +2527,44 @@ function generateProducts(productsToShow) {
             
             window.addEventListener('load', resizeVideo);
             window.addEventListener('resize', resizeVideo);
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const carousel = document.getElementById('commentsCarousel');
+            const notes = Array.from(carousel.querySelectorAll('.note'));
+            let currentIndex = 0;
+            const displayTime = 5000; // 5 segundos
+            
+            // Mostrar el primer comentario
+            showNote(currentIndex);
+            startCarousel();
+            
+            function showNote(index) {
+                // Ocultar todos los comentarios
+                notes.forEach(note => note.classList.remove('active'));
+                
+                // Mostrar el comentario actual
+                notes[index].classList.add('active');
+            }
+            
+            function nextNote() {
+                currentIndex = (currentIndex + 1) % notes.length;
+                showNote(currentIndex);
+            }
+            
+            function startCarousel() {
+                setInterval(nextNote, displayTime);
+            }
+            
+            // Pausar al pasar el mouse
+            carousel.addEventListener('mouseenter', () => {
+                clearInterval(carouselInterval);
+            });
+            
+            // Reanudar al quitar el mouse
+            carousel.addEventListener('mouseleave', () => {
+                startCarousel();
+            });
         });
 
 // Funciones globales
